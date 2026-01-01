@@ -117,7 +117,7 @@ The `brain.py` file currently contains accumulated content blocks from previous 
 - Graceful failure handling for network errors
 
 ### Technical Limitation
-The `grow()` function writes sentences that may contain newlines, but only prefixes the first line with `#`. This causes continuation lines to be unprefixed, which makes the file non-executable after content accumulation. This is a known characteristic of the historical implementation and represents the experimental nature of self-modifying code.
+The `grow()` function writes sentences with the format `f'# {line}\n'`, where `line` is a sentence string. When sentences from Project Gutenberg contain embedded newlines (which they do), only the first line gets the `#` prefix. Subsequent lines within the same sentence are written without the comment marker. This causes continuation lines to be unprefixed, which makes the file non-executable after content accumulation. This is a known characteristic of the historical implementation and represents the experimental nature of self-modifying code.
 
 ### To Use Fresh
 If you need an executable version:

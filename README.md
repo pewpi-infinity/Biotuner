@@ -65,6 +65,18 @@ pip install -r requirements.txt
 
 ## Usage
 
+### Checking System Status
+Run the integration example to see current system status:
+```bash
+python3 integration_example.py
+```
+
+This will display:
+- Mongoose OS configuration and mode
+- brain.py status and accumulated content
+- Dependency availability
+- Component status
+
 ### Running brain.py
 Execute the text processing module:
 ```bash
@@ -72,6 +84,8 @@ python3 brain.py
 ```
 
 Each execution fetches new content and appends it to the script file.
+
+**Note**: The current brain.py contains accumulated content from previous runs. See docs/BRAIN.md for details on using a fresh copy.
 
 ### Viewing Visualizations
 Open `index.html` in a web browser to view the visualization interface.
@@ -86,24 +100,25 @@ cat mongoose/mongoose.json
 
 ```
 Biotuner/
-├── brain.py              # Self-evolving text processor
-├── requirements.txt      # Python dependencies
-├── README.md            # This file
+├── brain.py                # Self-evolving text processor
+├── integration_example.py  # System status and integration demo
+├── requirements.txt        # Python dependencies
+├── README.md              # This file
 ├── mongoose/
-│   └── mongoose.json    # Mongoose OS configuration
+│   └── mongoose.json      # Mongoose OS configuration
 ├── docs/
-│   ├── BRAIN.md        # brain.py documentation
-│   ├── MONGOOSE.md     # Mongoose OS documentation
-│   └── index.html      # Documentation viewer
+│   ├── BRAIN.md          # brain.py documentation
+│   ├── MONGOOSE.md       # Mongoose OS documentation
+│   └── index.html        # Documentation viewer
 ├── token/
-│   └── TOKEN.md        # Token system documentation
+│   └── TOKEN.md          # Token system documentation
 ├── ledger/
-│   └── 20251220.md     # Settlement ledger
-├── index.html          # Main visualization
-├── index_2.html        # Secondary interface
-├── index_value.json    # Value tracking data
-├── visualizer.js       # Visualization logic
-└── c13b0_pricing.json  # Pricing configuration
+│   └── 20251220.md       # Settlement ledger
+├── index.html            # Main visualization
+├── index_2.html          # Secondary interface
+├── index_value.json      # Value tracking data
+├── visualizer.js         # Visualization logic
+└── c13b0_pricing.json    # Pricing configuration
 ```
 
 ## Historical Context

@@ -2,4 +2,5 @@
 # Required for brain.py functionality
 
 # HTTP requests for fetching from Project Gutenberg
-requests>=2.31.0
+# Using version constraints to ensure compatibility while allowing security patches
+requests>=2.31.0,<3.0.0
