@@ -1,0 +1,5 @@
+# Python dependencies for Biotuner
+# Required for brain.py functionality
+
+# HTTP requests for fetching from Project Gutenberg
+requests>=2.31.0
