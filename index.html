@@ -710,6 +710,20 @@
         <button onclick="mongooseSync()" style="flex: 1; min-width: 100px; padding: 8px 10px; background: rgba(200, 100, 200, 0.5); border: 1px solid rgba(220, 120, 220, 0.7); border-radius: 8px; color: #ffe0ff; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">🔄 Sync</button>
       </div>
       <div id="mongooseOutput" style="margin-top: 10px; padding: 8px; background: rgba(0, 0, 0, 0.3); border-radius: 6px; font-size: 0.75rem; color: #b0d0ff; min-height: 24px; font-family: monospace; display: none;"></div>
+      
+      <!-- Cart Status Display -->
+      <div id="mongooseCartsStatus" style="margin-top: 10px; padding: 8px; background: rgba(0, 0, 0, 0.25); border-radius: 6px; font-size: 0.7rem; color: #b0c0ff; display: none;">
+        <div style="font-weight: 600; margin-bottom: 4px; color: #d0d0ff;">🚀 Autonomous Carts</div>
+        <div id="cartsStatusList" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px;">
+          <div>🔍 Memory Search: <span style="color: #a0ffa0;">Ready</span></div>
+          <div>📡 Signal Gen: <span style="color: #a0ffa0;">Ready</span></div>
+          <div>🤖 Builder: <span style="color: #a0ffa0;">Ready</span></div>
+          <div>📍 Tracker: <span style="color: #a0ffa0;">Ready</span></div>
+        </div>
+        <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.65rem;">
+          <span id="lastCommitTime">Last commit: Never</span> • <span id="activityCount">0 activities</span>
+        </div>
+      </div>
     </div>
 
     <!-- ROLE BUTTONS -->
@@ -1920,6 +1934,92 @@
     window.mongooseSync = mongooseSync;
 
     console.log('Mongoose AI Integration loaded');
+  </script>
+
+  <!-- Mongoose Active Mode Integration -->
+  <script src="mongoose/mongoose_active.js"></script>
+  <script>
+    // Intercept the buildToken function to add tracking
+    if (typeof buildToken !== 'undefined') {
+      const originalBuildToken = buildToken;
+      buildToken = function(text, sourceType, filename) {
+        const token = originalBuildToken(text, sourceType, filename);
+        
+        // Track with MongooseActive
+        if (window.MongooseActive) {
+          window.MongooseActive.trackTokenGeneration(token);
+        }
+        
+        return token;
+      };
+    }
+
+    // Track role button clicks
+    if (typeof buttons !== 'undefined' && buttons) {
+      buttons.forEach(button => {
+        button.addEventListener('click', () => {
+          const role = button.dataset.role;
+          if (window.MongooseActive && role) {
+            window.MongooseActive.trackRoleClick(role);
+          }
+        });
+      });
+    }
+
+    // Update Mongoose panel with active mode info
+    if (window.MongooseActive) {
+      setInterval(() => {
+        const status = window.MongooseActive.getQueueStatus();
+        if (status.active && status.hasToken) {
+          const statusEl = document.getElementById('mongooseStatus');
+          if (statusEl && statusEl.textContent !== 'Active') {
+            statusEl.textContent = 'Active';
+            statusEl.style.background = 'rgba(100, 200, 100, 0.3)';
+            statusEl.style.borderColor = 'rgba(100, 200, 100, 0.6)';
+            statusEl.style.color = '#a0ffa0';
+          }
+          
+          // Show cart status
+          const cartsStatus = document.getElementById('mongooseCartsStatus');
+          if (cartsStatus) {
+            cartsStatus.style.display = 'block';
+          }
+          
+          // Update activity count
+          const activityCountEl = document.getElementById('activityCount');
+          if (activityCountEl) {
+            activityCountEl.textContent = `${status.totalActivities} activities`;
+          }
+        }
+      }, 2000);
+    }
+
+    // Add GitHub config button to Mongoose panel
+    setTimeout(() => {
+      const mongoosePanel = document.querySelector('[style*="rgba(100, 50, 150"]');
+      if (mongoosePanel && window.MongooseActive) {
+        const buttonContainer = mongoosePanel.querySelector('[style*="display: flex; gap: 6px"]');
+        if (buttonContainer) {
+          const configBtn = document.createElement('button');
+          configBtn.onclick = () => window.MongooseActive.configureGitHub();
+          configBtn.style.cssText = `
+            flex: 1;
+            min-width: 100px;
+            padding: 8px 10px;
+            background: rgba(255, 150, 50, 0.5);
+            border: 1px solid rgba(255, 180, 80, 0.7);
+            border-radius: 8px;
+            color: #ffe0d0;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+          `;
+          configBtn.textContent = '⚙️ Config';
+          buttonContainer.appendChild(configBtn);
+        }
+      }
+    }, 1000);
   </script>
 </body>
 </html>
