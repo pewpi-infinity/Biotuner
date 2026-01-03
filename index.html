@@ -1939,36 +1939,23 @@
   <!-- Mongoose Active Mode Integration -->
   <script src="mongoose/mongoose_active.js"></script>
   <script>
-    // Enhance token building to track with MongooseActive
-    const originalBuildTokenSubmit = buildTokenSubmit;
-    if (buildTokenSubmit) {
-      buildTokenSubmit.removeEventListener('click', originalBuildTokenSubmit);
-      buildTokenSubmit.addEventListener('click', () => {
-        const text = terminalInput.value.trim();
-        if (!text) {
-          terminalLog('error', '[ERROR] No content provided');
-          return;
-        }
-
-        terminalLog('system', '[PROCESS] Analyzing content...');
-        terminalLog('system', `[PROCESS] Content length: ${text.length} characters`);
-
-        const token = buildToken(text, 'text');
-
-        terminalLog('success', '[SUCCESS] Token generated!');
-        showTokenResult(token);
-
+    // Intercept the buildToken function to add tracking
+    if (typeof buildToken !== 'undefined') {
+      const originalBuildToken = buildToken;
+      buildToken = function(text, sourceType, filename) {
+        const token = originalBuildToken(text, sourceType, filename);
+        
         // Track with MongooseActive
         if (window.MongooseActive) {
           window.MongooseActive.trackTokenGeneration(token);
         }
-
-        terminalInput.value = '';
-      });
+        
+        return token;
+      };
     }
 
     // Track role button clicks
-    if (buttons) {
+    if (typeof buttons !== 'undefined' && buttons) {
       buttons.forEach(button => {
         button.addEventListener('click', () => {
           const role = button.dataset.role;
