@@ -93,6 +93,7 @@ def {func_name}(data):
             functions.append(func_code)
         
         # Combine into module
+        themes_dict = {k: v for k, v in themes.items()}
         code_gen['code'] = f"""#!/usr/bin/env python3
 \"\"\"
 Auto-generated module from Biotuner memory patterns
@@ -100,12 +101,15 @@ Generated: {datetime.utcnow().isoformat()}
 Themes detected: {', '.join(themes.keys())}
 \"\"\"
 
+# Theme data
+themes = {themes_dict}
+
 {''.join(functions)}
 
 def main():
     \"\"\"Main entry point\"\"\"
     print("Pattern-based processing module loaded")
-    print(f"Available themes: {list(themes.keys())}")
+    print(f"Available themes: {{list(themes.keys())}}")
 
 if __name__ == '__main__':
     main()

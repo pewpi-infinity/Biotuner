@@ -114,8 +114,9 @@ def search_token_hashes(pattern=None):
                             'file': filename,
                             'data': data
                         })
-                except:
-                    pass
+                except (FileNotFoundError, json.JSONDecodeError, PermissionError):
+                    # Skip files that can't be read
+                    continue
     
     return results
 
@@ -145,8 +146,8 @@ def search_ledger_entries(date=None):
                 with open(index_path, 'r') as f:
                     ledger_index = json.load(f)
                     results['entries'] = ledger_index
-        except:
-            pass
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            results['error'] = f'Failed to read ledger: {e}'
     
     return results
 

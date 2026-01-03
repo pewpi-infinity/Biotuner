@@ -185,7 +185,7 @@ Click OK to configure, or Cancel to use passive mode.
         console.log('✅ Commit successful');
       } catch (error) {
         console.error('❌ Commit failed:', error);
-        // Re-queue activities on failure
+        // Re-queue activities on failure (restore from local copy)
         activityQueue.push(...activities);
       } finally {
         commitInProgress = false;
@@ -222,7 +222,7 @@ Click OK to configure, or Cancel to use passive mode.
     async updateActivityLogFile(activities) {
       // In a real implementation, this would update the file on the server
       // For now, we log to console and localStorage
-      const existingLog = JSON.parse(localStorage.getItem('activity_log') || '{"activities": []}');
+      const existingLog = JSON.parse(localStorage.getItem('activity_log') || '{"activities": [], "version": "1.0", "created": "' + new Date().toISOString() + '"}');
       existingLog.activities.push(...activities);
       localStorage.setItem('activity_log', JSON.stringify(existingLog));
       
@@ -360,7 +360,8 @@ Click OK to configure, or Cancel to use passive mode.
           return data.username || 'anonymous';
         }
       } catch (e) {
-        // Ignore
+        // Session storage not available or invalid JSON - safely ignore
+        console.debug('Session storage unavailable or invalid');
       }
       return 'anonymous';
     }
